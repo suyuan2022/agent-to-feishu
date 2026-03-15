@@ -1,0 +1,60 @@
+{
+  "name": "agent-to-feishu",
+  "version": "0.1.0",
+  "description": "Lightweight CLI + MCP Server for AI agents to operate Feishu/Lark: messaging, docs, bitable, wiki, calendar",
+  "type": "module",
+  "bin": {
+    "agent-to-feishu": "dist/cli.js"
+  },
+  "main": "dist/index.js",
+  "exports": {
+    ".": "./dist/index.js",
+    "./mcp": "./dist/mcp.js"
+  },
+  "scripts": {
+    "build": "tsup",
+    "dev": "tsx src/cli.ts",
+    "test": "vitest run",
+    "test:watch": "vitest",
+    "typecheck": "tsc --noEmit",
+    "prepublishOnly": "npm run build"
+  },
+  "dependencies": {
+    "@larksuiteoapi/node-sdk": "^1.59.0",
+    "@modelcontextprotocol/sdk": "^1.12.0",
+    "commander": "^13.1.0",
+    "zod": "^3.24.0"
+  },
+  "devDependencies": {
+    "@types/node": "^22.0.0",
+    "tsup": "^8.4.0",
+    "tsx": "^4.21.0",
+    "typescript": "^5.7.0",
+    "vitest": "^3.1.0"
+  },
+  "engines": {
+    "node": ">=20"
+  },
+  "files": [
+    "dist",
+    "skill",
+    "README.md",
+    "README_CN.md",
+    "LICENSE"
+  ],
+  "keywords": [
+    "feishu",
+    "lark",
+    "mcp",
+    "ai-agent",
+    "claude-code",
+    "openclaw",
+    "cli"
+  ],
+  "author": "suyuan",
+  "license": "MIT",
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/suyuan/agent-to-feishu"
+  }
+}
