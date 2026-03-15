@@ -37,23 +37,10 @@ export async function createNode(
   title: string,
   objType: "docx" | "sheet" | "bitable" = "docx"
 ) {
-  const token = await client.getToken();
-  const domain = "https://open.feishu.cn";
-  const res = await fetch(
-    `${domain}/open-apis/wiki/v2/spaces/${spaceId}/nodes`,
-    {
-      method: "POST",
-      headers: {
-        Authorization: `Bearer ${token}`,
-        "Content-Type": "application/json",
-      },
-      body: JSON.stringify({
-        obj_type: objType,
-        parent_node_token: parentNodeToken,
-        node_type: "origin",
-        title,
-      }),
-    }
-  );
-  return res.json();
+  return client.request("POST", `/open-apis/wiki/v2/spaces/${spaceId}/nodes`, {
+    obj_type: objType,
+    parent_node_token: parentNodeToken,
+    node_type: "origin",
+    title,
+  });
 }

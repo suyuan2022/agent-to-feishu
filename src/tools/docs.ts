@@ -35,22 +35,11 @@ export async function searchDocs(
   query: string,
   count = 20
 ) {
-  const token = await client.getToken();
-  const domain = "https://open.feishu.cn";
-  const url = `${domain}/open-apis/suite/docs-api/search/object`;
-  const res = await fetch(url, {
-    method: "POST",
-    headers: {
-      Authorization: `Bearer ${token}`,
-      "Content-Type": "application/json",
-    },
-    body: JSON.stringify({
-      search_key: query,
-      count,
-      docs_types: ["docx", "sheet", "bitable", "wiki"],
-    }),
+  return client.request("POST", "/open-apis/suite/docs-api/search/object", {
+    search_key: query,
+    count,
+    docs_types: ["docx", "sheet", "bitable", "wiki"],
   });
-  return res.json();
 }
 
 export async function listFolder(

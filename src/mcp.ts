@@ -346,4 +346,10 @@ export async function startMcpServer() {
 
   const transport = new StdioServerTransport();
   await server.connect(transport);
+
+  // Prevent orphan processes when parent (Claude Code / Cursor) exits
+  process.stdin.on("close", () => process.exit(0));
+  process.stdin.on("end", () => process.exit(0));
+  process.on("SIGINT", () => process.exit(0));
+  process.on("SIGTERM", () => process.exit(0));
 }

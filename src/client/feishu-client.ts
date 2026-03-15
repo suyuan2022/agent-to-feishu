@@ -14,10 +14,19 @@ export class FeishuClient {
       config.appSecret,
       config.domain
     );
+    const stderrLogger = {
+      fatal: (...args: any[]) => console.error("[fatal]", ...args),
+      error: (...args: any[]) => console.error("[error]", ...args),
+      warn: (..._: any[]) => {},
+      info: (..._: any[]) => {},
+      debug: (..._: any[]) => {},
+      trace: (..._: any[]) => {},
+    };
     this.sdk = new lark.Client({
       appId: config.appId,
       appSecret: config.appSecret,
       domain: config.domain || "https://open.feishu.cn",
+      logger: stderrLogger as any,
     });
   }
 
