@@ -8,6 +8,7 @@ import * as docs from "./tools/docs.js";
 import * as bitable from "./tools/bitable.js";
 import * as wiki from "./tools/wiki.js";
 import * as calendar from "./tools/calendar.js";
+import * as approval from "./tools/approval.js";
 
 const program = new Command();
 
@@ -463,6 +464,97 @@ calCmd
       const config = requireConfig();
       const client = new FeishuClient(config);
       const res = await calendar.deleteEvent(client, opts.calendar, opts.event);
+      printJson(res);
+    } catch (err) {
+      printError(formatError(err));
+      process.exit(1);
+    }
+  });
+
+// ── approval ──
+
+const approvalCmd = program.command("approval").description("Approval operations");
+
+approvalCmd
+  .command("submit")
+  .description("Submit an approval instance")
+  .requiredOption("--code <code>", "Approval definition code")
+  .requiredOption("--user <id>", "Submitter user ID (open_id)")
+  .requiredOption("--form <json>", "Form data JSON string")
+  .action(async (opts) => {
+    try {
+      const config = requireConfig();
+      const client = new FeishuClient(config);
+      const res = await approval.submitInstance(client, opts.code, opts.user, opts.form);
+      printJson(res);
+    } catch (err) {
+      printError(formatError(err));
+      process.exit(1);
+    }
+  });
+
+approvalCmd
+  .command("query")
+  .description("Query an approval instance")
+  .requiredOption("--id <instanceId>", "Approval instance ID")
+  .action(async (opts) => {
+    try {
+      const config = requireConfig();
+      const client = new FeishuClient(config);
+      const res = await approval.queryInstance(client, opts.id);
+      printJson(res);
+    } catch (err) {
+      printError(formatError(err));
+      process.exit(1);
+    }
+  });
+
+approvalCmd
+  .command("cancel")
+  .description("Cancel an approval instance")
+  .requiredOption("--code <code>", "Approval definition code")
+  .requiredOption("--id <instanceId>", "Approval instance ID")
+  .requiredOption("--user <id>", "User ID")
+  .action(async (opts) => {
+    try {
+      const config = requireConfig();
+      const client = new FeishuClient(config);
+      const res = await approval.cancelInstance(client, opts.code, opts.id, opts.user);
+      printJson(res);
+    } catch (err) {
+      printError(formatError(err));
+      process.exit(1);
+    }
+  });
+
+approvalCmd
+  .command("comment")
+  .description("Add a comment to an approval instance")
+  .requiredOption("--id <instanceId>", "Approval instance ID")
+  .requiredOption("--user <id>", "User ID")
+  .requiredOption("--content <text>", "Comment content")
+  .action(async (opts) => {
+    try {
+      const config = requireConfig();
+      const client = new FeishuClient(config);
+      const res = await approval.addComment(client, opts.id, opts.user, opts.content);
+      printJson(res);
+    } catch (err) {
+      printError(formatError(err));
+      process.exit(1);
+    }
+  });
+
+approvalCmd
+  .command("upload-file")
+  .description("Upload a file for approval attachment")
+  .requiredOption("--file <path>", "File path")
+  .option("--name <name>", "File name (default: basename)")
+  .action(async (opts) => {
+    try {
+      const config = requireConfig();
+      const client = new FeishuClient(config);
+      const res = await approval.uploadFile(client, opts.file, opts.name);
       printJson(res);
     } catch (err) {
       printError(formatError(err));

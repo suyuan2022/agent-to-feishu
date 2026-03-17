@@ -6,4 +6,5 @@ export * as docs from "./tools/docs.js";
 export * as bitable from "./tools/bitable.js";
 export * as wiki from "./tools/wiki.js";
 export * as calendar from "./tools/calendar.js";
+export * as approval from "./tools/approval.js";
 export * from "./utils/config.js";

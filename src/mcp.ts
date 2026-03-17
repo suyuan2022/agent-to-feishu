@@ -8,6 +8,7 @@ import * as docs from "./tools/docs.js";
 import * as bitable from "./tools/bitable.js";
 import * as wiki from "./tools/wiki.js";
 import * as calendar from "./tools/calendar.js";
+import * as approval from "./tools/approval.js";
 import { formatError } from "./utils/errors.js";
 
 function ok(data: unknown) {
@@ -337,6 +338,121 @@ export async function startMcpServer() {
     async ({ event_id, calendar_id }) => {
       try {
         const res = await calendar.deleteEvent(client, calendar_id, event_id);
+        return ok(res);
+      } catch (e) { return err(formatError(e)); }
+    }
+  );
+
+  // ── Approval Tools ──
+
+  server.tool(
+    "approval_submit",
+    "Submit a Feishu approval instance (e.g. reimbursement, leave request)",
+    {
+      approval_code: z.string().describe("Approval definition code (template ID)"),
+      user_id: z.string().describe("Submitter's open_id"),
+      form: z.string().describe("Form data as JSON string, fields depend on the template"),
+    },
+    async ({ approval_code, user_id, form }) => {
+      try {
+        const res = await approval.submitInstance(client, approval_code, user_id, form);
+        return ok(res);
+      } catch (e) { return err(formatError(e)); }
+    }
+  );
+
+  server.tool(
+    "approval_query",
+    "Query a Feishu approval instance status and details",
+    { instance_id: z.string().describe("Approval instance ID") },
+    async ({ instance_id }) => {
+      try {
+        const res = await approval.queryInstance(client, instance_id);
+        return ok(res);
+      } catch (e) { return err(formatError(e)); }
+    }
+  );
+
+  server.tool(
+    "approval_cancel",
+    "Cancel/withdraw a submitted Feishu approval",
+    {
+      approval_code: z.string(),
+      instance_id: z.string(),
+      user_id: z.string().describe("Submitter's open_id"),
+    },
+    async ({ approval_code, instance_id, user_id }) => {
+      try {
+        const res = await approval.cancelInstance(client, approval_code, instance_id, user_id);
+        return ok(res);
+      } catch (e) { return err(formatError(e)); }
+    }
+  );
+
+  server.tool(
+    "approval_comment",
+    "Add a comment to a Feishu approval instance",
+    {
+      instance_id: z.string(),
+      user_id: z.string(),
+      content: z.string().describe("Comment text"),
+    },
+    async ({ instance_id, user_id, content }) => {
+      try {
+        const res = await approval.addComment(client, instance_id, user_id, content);
+        return ok(res);
+      } catch (e) { return err(formatError(e)); }
+    }
+  );
+
+  server.tool(
+    "approval_upload_file",
+    "Upload a file as approval attachment, returns file_code for form submission",
+    {
+      file_path: z.string().describe("Local file path"),
+      file_name: z.string().optional().describe("File name override"),
+    },
+    async ({ file_path, file_name }) => {
+      try {
+        const res = await approval.uploadFile(client, file_path, file_name || "");
+        return ok(res);
+      } catch (e) { return err(formatError(e)); }
+    }
+  );
+
+  // ── Docs Edit Tools ──
+
+  server.tool(
+    "docs_edit",
+    "Add content blocks to a Feishu document (append text, headings, etc.)",
+    {
+      document_id: z.string().describe("Document ID or URL"),
+      block_id: z.string().describe("Parent block ID (use document ID for root)"),
+      content: z.string().describe("Text content to append"),
+    },
+    async ({ document_id, block_id, content }) => {
+      try {
+        const docId = docs.extractDocToken(document_id);
+        const children = [{
+          block_type: 2,
+          text: { elements: [{ text_run: { content } }] },
+        }];
+        const res = await docs.editDoc(client, docId, block_id, children);
+        return ok(res);
+      } catch (e) { return err(formatError(e)); }
+    }
+  );
+
+  server.tool(
+    "docs_get_blocks",
+    "List all blocks in a Feishu document (for editing)",
+    {
+      document_id: z.string().describe("Document ID or URL"),
+    },
+    async ({ document_id }) => {
+      try {
+        const docId = docs.extractDocToken(document_id);
+        const res = await docs.getDocBlocks(client, docId);
         return ok(res);
       } catch (e) { return err(formatError(e)); }
     }

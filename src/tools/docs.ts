@@ -42,6 +42,34 @@ export async function searchDocs(
   });
 }
 
+export async function editDoc(
+  client: FeishuClient,
+  documentId: string,
+  blockId: string,
+  children: Array<{
+    block_type: number;
+    text?: { elements: Array<{ text_run?: { content: string } }> };
+  }>
+) {
+  const res = await client.docx.v1.documentBlockChildren.create({
+    path: { document_id: documentId, block_id: blockId },
+    data: { children: children as any, index: -1 },
+  });
+  return res;
+}
+
+export async function getDocBlocks(
+  client: FeishuClient,
+  documentId: string,
+  pageSize = 500
+) {
+  const res = await client.docx.v1.documentBlock.list({
+    path: { document_id: documentId },
+    params: { page_size: pageSize },
+  });
+  return res;
+}
+
 export async function listFolder(
   client: FeishuClient,
   folderToken?: string,
