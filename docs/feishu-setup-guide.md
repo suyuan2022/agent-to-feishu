@@ -35,7 +35,9 @@
       "approval:approval",
       "bitable:app",
       "calendar:calendar",
+      "contact:contact.base:readonly",
       "contact:user.employee_id:readonly",
+      "contact:user.id:readonly",
       "docx:document",
       "drive:drive",
       "drive:file",
@@ -44,6 +46,7 @@
       "im:chat.members:bot_access",
       "im:message",
       "im:message.group_at_msg:readonly",
+      "im:message.group_msg",
       "im:message.p2p_msg:readonly",
       "im:message:readonly",
       "im:message:send_as_bot",
@@ -72,8 +75,11 @@
 | `im:chat` | 群聊管理（建群、列群） | 免审 |
 | `im:chat.members:bot_access` | 允许 bot 被拉进群 | 免审 |
 | `im:chat.access_event.bot_p2p_chat:read` | 监听私聊会话事件 | 免审 |
+| `im:message.group_msg` | 读取群内所有消息（含历史记录） | **需管理员审批** |
 | `im:resource` | 访问消息中的图片/文件 | 免审 |
-| `contact:user.employee_id:readonly` | 查用户 ID（@人时用） | 免审 |
+| `contact:user.employee_id:readonly` | 通过工号查用户 | 免审 |
+| `contact:user.id:readonly` | 通过邮箱/手机号查用户 ID（@人时用） | 免审 |
+| `contact:contact.base:readonly` | 获取用户基本信息（姓名、头像） | 免审 |
 | `docx:document` | 云文档读写 | 免审 |
 | `drive:drive` | 云盘文件读写 | 免审 |
 | `drive:file` | 上传下载文件 | 免审 |
@@ -83,7 +89,7 @@
 | `calendar:calendar` | 日历事件读写 | 免审 |
 | `approval:approval` | 审批全部操作（提交、查询、同意、拒绝、撤回） | 免审 |
 
-> 以上 18 条权限全部是「免审权限」，加完发版后立即生效，不需要管理员额外审批。
+> 共 21 条权限。其中 `im:message.group_msg` 是**敏感权限**，需要管理员审批后才能生效；其余 20 条为免审权限，发版后立即生效。
 
 ---
 
